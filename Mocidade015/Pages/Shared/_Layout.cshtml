@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Excursão Mocidade 015</title>
+    
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Mocidade015.styles.css" asp-append-version="true" />
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+        theme: {
+        extend: {
+        colors: {
+        'mocidade-blue': '#4CA3ED',
+        'mocidade-dark': '#111827',
+        },
+        fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        title: ['Montserrat', 'sans-serif']
+        }
+        }
+        }
+        }
+    </script>
+</head>
+<body class="bg-mocidade-dark text-white font-sans min-h-screen flex flex-col">
+    
+    <main role="main" class="flex-grow">
+        @RenderBody()
+    </main>
+
+    <footer class="bg-black py-6 text-center text-sm text-gray-400 mt-auto">
+        <div class="container mx-auto px-4">
+            <p>&copy; 2026 - Mocidade 015 - Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
