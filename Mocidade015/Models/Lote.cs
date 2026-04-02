@@ -13,6 +13,8 @@
 
     public class Passageiro
     {
+        public Lote Lote { get; set; } = null!;
+
         public Guid Id { get; set; } = Guid.NewGuid();
         public Guid LoteId { get; set; }
         public string NomeCompleto { get; set; } = string.Empty;

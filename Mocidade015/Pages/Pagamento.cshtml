@@ -2,85 +2,143 @@
 @model Mocidade015.Pages.PagamentoModel
 @{
     ViewData["Title"] = "Finalizar Pagamento";
-
-    // Regra financeira básica: se não vier quantidade na URL, assumimos 1.
-    int qtdPassagens = Model.QuantidadePessoas;
-    decimal valorUnitario = 30.00m;
-    decimal valorTotal = qtdPassagens * valorUnitario;
 }
 
-<div class="container mx-auto px-4 py-10 max-w-5xl mt-10">
-    
-    <div class="text-center mb-10">
+<div class="container mx-auto px-4 py-10 max-w-2xl mt-10">
+    <div class="text-center mb-8">
         <h2 class="text-3xl md:text-4xl font-extrabold text-white font-title mb-2">Finalizar <span class="text-mocidade-blue">Reserva</span></h2>
-        <p class="text-gray-400">Escolha a forma de pagamento. Seus lugares estão pré-reservados.</p>
+        <p class="text-gray-400">Escolha a forma de pagamento para garantSSir suas vagas.</p>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        <div class="lg:col-span-1 space-y-6">
-            <div class="bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-lg">
-                <h3 class="text-lg font-bold text-white mb-4 border-b border-gray-700 pb-2">Resumo da Viagem</h3>
-                
-                <div class="flex justify-between items-center mb-3 text-gray-300">
-                    <span>Passagem Excursão</span>
-                    <span>@qtdPassagens x R$ 30,00</span>
-                </div>
-                
-                <div class="flex justify-between items-center mb-6 text-gray-400 text-sm">
-                    <span>Taxas</span>
-                    <span>R$ 0,00</span>
-                </div>
-
-                <div class="flex justify-between items-center pt-4 border-t border-gray-700">
-                    <span class="text-xl font-bold text-white">Total</span>
-                    <span class="text-2xl font-extrabold text-mocidade-blue">R$ @valorTotal.ToString("N2")</span>
-                </div>
-            </div>
-
-            <div class="bg-gray-800/50 p-4 rounded-xl border border-gray-700 text-sm text-gray-400 text-center">
-                <p>Ambiente seguro e criptografado.</p>
-                <p>Seus dados estão protegidos (LGPD).</p>
-            </div>
+    @if (Model.PagamentoBloqueado)
+    {
+        <div class="flex flex-col items-center justify-center p-8 bg-gray-900 rounded-xl border border-gray-700 shadow-2xl mb-8">
+            <h3 class="text-2xl text-yellow-400 font-bold mb-4 text-center">Aviso da Reserva</h3>
+            <p class="text-gray-300 mb-6 text-center text-lg">@Model.MensagemBloqueio</p>
+            <a href="/" class="px-8 py-3 bg-mocidade-blue hover:bg-blue-600 text-white font-bold rounded-xl transition-all">
+                Voltar ao Início
+            </a>
         </div>
+    }
+    else
+    {
+        <!-- 1. CAIXA DO PIX -->
+        <div class="flex flex-col items-center justify-center p-8 bg-gray-900 rounded-xl border border-gray-700 shadow-2xl mb-8">
+            <h3 class="text-xl text-white font-bold mb-4">Pagar com PIX (Sem taxa)</h3>
+            <p class="text-gray-300 mb-6 text-center text-lg">Total a pagar: <strong class="text-green-400 text-2xl ml-2">R$ @Model.ValorPix.ToString("N2")</strong></p>
+            
+            @if (!string.IsNullOrEmpty(Model.PixQrCodeBase64))
+            {
+                <img src="data:image/png;base64,@Model.PixQrCodeBase64" alt="QR Code PIX" class="w-56 h-56 mb-8 border-4 border-white rounded-xl p-2 bg-white shadow-lg">
+            }
+            else
+            {
+                <p class="text-red-400 mb-6 font-semibold">Erro ao gerar o QR Code. O Mercado Pago recusou a requisição.</p>
+            }
 
-        <div class="lg:col-span-2">
-            <div class="bg-gray-800 p-6 md:p-8 rounded-2xl border border-gray-700 shadow-lg">
-                <h3 class="text-xl font-bold text-white mb-6">Forma de Pagamento</h3>
-
-                <div class="flex gap-4 mb-8">
-                    <button class="flex-1 py-3 border-2 border-mocidade-blue bg-mocidade-blue/10 text-mocidade-blue rounded-xl font-semibold flex items-center justify-center gap-2 transition-all">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                        PIX
+            <div class="w-full flex flex-col gap-3">
+                <label class="text-sm text-gray-400 font-medium">Ou pague com o código "Copia e Cola":</label>
+                <div class="flex gap-2">
+                    <input type="text" id="pixCode" readonly value="@Model.PixCopiaECola" class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-sm text-gray-400 font-mono focus:outline-none focus:ring-2 focus:ring-mocidade-blue">
+                    <button type="button" onclick="copiarPix()" class="px-6 py-3 bg-mocidade-blue hover:bg-blue-600 text-white rounded-lg transition-all font-bold whitespace-nowrap shadow-lg">
+                        Copiar
                     </button>
-                    <button class="flex-1 py-3 border border-gray-600 hover:border-gray-500 text-gray-400 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all opacity-50 cursor-not-allowed" title="Em breve">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-                        Cartão
-                    </button>
-                </div>
-
-                <div class="flex flex-col items-center justify-center py-6">
-                    <div class="bg-white p-2 rounded-xl mb-6">
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=ExcursaoMocidade015" alt="QR Code Pix" class="w-48 h-48">
-                    </div>
-                    
-                    <p class="text-gray-300 text-center mb-4">Escaneie o QR Code ou copie o código Pix abaixo para pagar <strong class="text-white">R$ @valorTotal.ToString("N2")</strong></p>
-
-                    <div class="w-full flex">
-                        <input type="text" readonly value="00020126580014br.gov.bcb.pix0136[CODIGO_MERCADO_PAGO_AQUI]" class="w-full bg-gray-900 border border-gray-600 rounded-l-lg px-4 py-3 text-gray-400 font-mono text-sm outline-none">
-                        <button class="bg-gray-700 hover:bg-gray-600 px-6 rounded-r-lg text-white font-semibold transition-colors border-y border-r border-gray-600">
-                            Copiar
-                        </button>
-                    </div>
-                </div>
-
-                <div class="mt-8 border-t border-gray-700 pt-6">
-                    <a href="/Sucesso" class="block w-full text-center px-8 py-4 bg-green-600 hover:bg-green-500 text-white font-bold text-lg rounded-xl shadow-[0_0_15px_rgba(22,163,74,0.3)] transition-all transform hover:scale-105">
-                        Simular Pagamento Confirmado
-                    </a>
                 </div>
             </div>
         </div>
 
-    </div>
+        <!-- 2. CAIXA DO CARTÃO DE CRÉDITO/DÉBITO -->
+        <div class="flex flex-col p-8 bg-gray-900 rounded-xl border border-gray-700 shadow-2xl">
+            <h3 class="text-xl text-white font-bold mb-2 text-center">Cartão de Crédito ou Débito</h3>
+            <p class="text-gray-400 mb-8 text-center text-sm">Com repasse de taxa da operadora. Total: <strong class="text-yellow-400">R$ @Model.ValorCartao.ToString("N2")</strong></p>
+            
+            <div id="paymentBrick_container"></div>
+        </div>
+    }
 </div>
+
+@Html.AntiForgeryToken()
+
+@section Scripts {
+    @if (!Model.PagamentoBloqueado)
+    {
+        <script>
+            function copiarPix() {
+                var copyText = document.getElementById("pixCode");
+                copyText.select();
+                copyText.setSelectionRange(0, 99999);
+                navigator.clipboard.writeText(copyText.value);
+                alert("Código Pix copiado com sucesso!");
+            }
+        </script>
+
+        <script src="https://sdk.mercadopago.com/js/v2"></script>
+        <script>
+            // Sua chave pública exata aqui!
+            const mp = new MercadoPago('APP_USR-1e76989b-c0fe-49a2-9cd0-143e462ceafd', {
+            locale: 'pt-BR'
+            });
+
+            const bricksBuilder = mp.bricks();
+            
+            const renderPaymentBrick = async (bricksBuilder) => {
+            const settings = {
+            initialization: {
+            amount: @Model.ValorCartao.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture),
+            },
+            customization: {
+            visual: {
+            style: {
+            theme: "dark",
+            }
+            },
+            paymentMethods: {
+            creditCard: "all",
+            debitCard: "all"
+            },
+            },
+            callbacks: {
+            onReady: () => {
+            console.log("Formulário de cartão carregado!");
+            },
+            onSubmit: ({ selectedPaymentMethod, formData }) => {
+            return new Promise((resolve, reject) => {
+            fetch("/Pagamento?handler=ProcessarCartao&loteId=@Model.LoteId", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            "RequestVerificationToken": document.getElementsByName("__RequestVerificationToken")[0].value
+            },
+            body: JSON.stringify(formData)
+            })
+            .then((response) => response.json())
+            .then((data) => {
+            if (data.success) {
+            window.location.href = "/Sucesso";
+            } else {
+            alert("Pagamento recusado: " + data.status);
+            }
+            resolve();
+            })
+            .catch((error) => {
+            console.error(error);
+            reject();
+            });
+            });
+            },
+            onError: (error) => {
+            console.error("Erro no Brick:", error);
+            },
+            },
+            };
+            window.paymentBrickController = await bricksBuilder.create(
+            "payment",
+            "paymentBrick_container",
+            settings
+            );
+            };
+            
+            renderPaymentBrick(bricksBuilder);
+        </script>
+    }
+}
