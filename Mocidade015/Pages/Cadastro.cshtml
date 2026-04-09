@@ -1,173 +1,39 @@
 ﻿@page
 @model Mocidade015.Pages.CadastroModel
 @{
-    ViewData["Title"] = "Cadastro de Passageiros";
+    ViewData["Title"] = "Criar Conta";
 }
 
-<div class="container mx-auto px-4 py-10 max-w-4xl mt-10">
-    
-    <div class="text-center mb-10">
-        <h2 class="text-3xl md:text-4xl font-extrabold text-white font-title mb-2">Ficha de <span class="text-mocidade-blue">Embarque</span></h2>
-        <p class="text-gray-400">Preencha os dados com atenção. O e-mail informado será o titular do pagamento.</p>
+<div class="card shadow border-0 rounded-4">
+    <div class="card-body p-4">
+        <h3 class="text-center text-azul-escuro fw-bold mb-3">Cadastre-se</h3>
+        <p class="text-center text-muted small mb-4">Crie sua conta para reservar sua passagem.</p>
+
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="Input.Nome" class="form-label fw-bold">Nome Completo</label>
+                <input asp-for="Input.Nome" class="form-control" placeholder="Vinnicius Gabriel..." required />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.Email" class="form-label fw-bold">E-mail</label>
+                <input asp-for="Input.Email" type="email" class="form-control" placeholder="exemplo@email.com" required />
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Input.Senha" class="form-label fw-bold">Senha</label>
+                <input asp-for="Input.Senha" type="password" class="form-control" placeholder="••••••••" required />
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary-custom btn-lg fw-bold">Criar Minha Conta</button>
+            </div>
+        </form>
+
+        <div class="text-center mt-3">
+            <a asp-page="/Login" class="text-decoration-none text-muted small">Já tem conta? Faça login</a>
+        </div>
     </div>
-
-    @if (!ModelState.IsValid)
-    {
-        <div class="bg-red-900 bg-opacity-30 border border-red-500 text-red-300 p-4 rounded-xl mb-6 font-medium" asp-validation-summary="All"></div>
-    }
-
-    <form method="post" id="formCadastro" class="space-y-8">
-        
-        <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg">
-            <h3 class="text-xl font-bold text-white mb-4 border-b border-gray-700 pb-2">Contato do Titular da Reserva</h3>
-            <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">E-mail para recebimento do comprovante *</label>
-                <input type="email" name="Lote.EmailTitular" required class="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:ring-mocidade-blue" />
-            </div>
-        </div>
-
-        <div id="passageiros-container" class="space-y-6">
-            
-            <div class="passageiro-card bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg relative" data-index="0">
-                <h3 class="text-xl font-bold text-mocidade-blue mb-4 pb-2 border-b border-gray-700 titulo-passageiro">Passageiro 01</h3>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Nome Completo *</label>
-                        <input type="text" name="Lote.Passageiros[0].NomeCompleto" required class="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:ring-mocidade-blue" />
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-1">CPF *</label>
-                        <input type="text" name="Lote.Passageiros[0].Cpf" placeholder="000.000.000-00" required class="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:ring-mocidade-blue" />
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-1">RG *</label>
-                        <input type="text" name="Lote.Passageiros[0].Rg" required class="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:ring-mocidade-blue" />
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Data de Nascimento *</label>
-                        <input type="date" name="Lote.Passageiros[0].DataNascimento" required class="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:ring-mocidade-blue data-nascimento" />
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Telefone (WhatsApp) *</label>
-                        <input type="text" name="Lote.Passageiros[0].Telefone" placeholder="(00) 00000-0000" required class="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:ring-mocidade-blue" />
-                    </div>
-
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Nome da Mãe *</label>
-                        <input type="text" name="Lote.Passageiros[0].NomeMae" required class="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:ring-mocidade-blue" />
-                    </div>
-
-                    <div class="md:col-span-2 contatos-emergencia hidden bg-red-900 bg-opacity-20 border border-red-800 p-4 rounded-lg mt-2">
-                        <p class="text-red-400 text-sm mb-3 font-semibold">⚠️ Passageiro menor de idade. Contatos obrigatórios.</p>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-red-200 mb-1">Contato de Emergência 1 *</label>
-                                <input type="text" name="Lote.Passageiros[0].ContatoEmergencia1" class="w-full bg-gray-900 border border-red-800 rounded-lg px-4 py-2.5 text-white focus:ring-red-500 input-emergencia" />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-red-200 mb-1">Contato de Emergência 2 *</label>
-                                <input type="text" name="Lote.Passageiros[0].ContatoEmergencia2" class="w-full bg-gray-900 border border-red-800 rounded-lg px-4 py-2.5 text-white focus:ring-red-500 input-emergencia" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Comum Congregação *</label>
-                        <input type="text" name="Lote.Passageiros[0].ComumCongregacao" required class="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:ring-mocidade-blue" />
-                    </div>
-
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Endereço Residencial *</label>
-                        <input type="text" name="Lote.Passageiros[0].Endereco" required class="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:ring-mocidade-blue" />
-                    </div>
-
-                    <div class="md:col-span-2 flex items-center gap-3 mt-2">
-                        <input type="checkbox" name="Lote.Passageiros[0].Batizado" value="true" class="w-5 h-5 rounded border-gray-600 text-mocidade-blue bg-gray-900 cursor-pointer" />
-                        <label class="text-sm font-medium text-gray-300 cursor-pointer">Passageiro é batizado?</label>
-                    </div>
-                </div>
-            </div>
-            
-        </div>
-
-        <div class="flex flex-col md:flex-row gap-4 justify-between items-center mt-8">
-            <button type="button" id="btnAdicionar" class="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors flex items-center gap-2 w-full md:w-auto justify-center">
-                + Adicionar Acompanhante
-            </button>
-            
-            <button type="submit" class="px-8 py-4 bg-mocidade-blue hover:bg-blue-600 text-white font-bold text-lg rounded-xl shadow-[0_0_15px_rgba(76,163,237,0.3)] transition-all transform hover:scale-105 w-full md:w-auto text-center">
-                Ir para Pagamento ➔
-            </button>
-        </div>
-    </form>
 </div>
-
-@section Scripts {
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const container = document.getElementById('passageiros-container');
-            const btnAdicionar = document.getElementById('btnAdicionar');
-            let passageiroCount = 1;
-
-            function verificarIdade(inputData, card) {
-                if(!inputData.value) return;
-                const dataNasc = new Date(inputData.value);
-                const hoje = new Date();
-                let idade = hoje.getFullYear() - dataNasc.getFullYear();
-                const m = hoje.getMonth() - dataNasc.getMonth();
-                if (m < 0 || (m === 0 && hoje.getDate() < dataNasc.getDate())) {
-                    idade--;
-                }
-                const divEmergencia = card.querySelector('.contatos-emergencia');
-                const inputsEmergencia = divEmergencia.querySelectorAll('.input-emergencia');
-                if (idade < 18) {
-                    divEmergencia.classList.remove('hidden');
-                    inputsEmergencia.forEach(input => input.setAttribute('required', 'required'));
-                } else {
-                    divEmergencia.classList.add('hidden');
-                    inputsEmergencia.forEach(input => input.removeAttribute('required'));
-                }
-            }
-
-            container.addEventListener('change', function(e) {
-                if(e.target.classList.contains('data-nascimento')){
-                    verificarIdade(e.target, e.target.closest('.passageiro-card'));
-                }
-            });
-
-            btnAdicionar.addEventListener('click', function() {
-                const template = document.querySelector('.passageiro-card').cloneNode(true);
-                template.setAttribute('data-index', passageiroCount);
-                template.querySelector('.titulo-passageiro').textContent = `Passageiro 0${passageiroCount + 1}`;
-                
-                const inputs = template.querySelectorAll('input');
-                inputs.forEach(input => {
-                    if(input.type !== 'checkbox' && input.type !== 'radio') input.value = '';
-                    else input.checked = false;
-                    
-                    if(input.name) {
-                        input.name = input.name.replace(/\[\d+\]/, `[${passageiroCount}]`);
-                    }
-                });
-
-                template.querySelector('.contatos-emergencia').classList.add('hidden');
-                template.querySelectorAll('.input-emergencia').forEach(inp => inp.removeAttribute('required'));
-
-                const btnRemover = document.createElement('button');
-                btnRemover.type = 'button';
-                btnRemover.className = 'absolute top-6 right-6 text-red-400 hover:text-red-300 font-semibold text-sm';
-                btnRemover.textContent = 'Remover';
-                btnRemover.onclick = function() { template.remove(); };
-                template.appendChild(btnRemover);
-
-                container.appendChild(template);
-                passageiroCount++;
-            });
-        });
-    </script>
-}

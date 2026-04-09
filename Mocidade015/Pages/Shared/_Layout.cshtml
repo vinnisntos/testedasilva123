@@ -3,44 +3,56 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Excursão Mocidade 015</title>
+    <title>@ViewData["Title"] - Mocidade 015</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Mocidade015.styles.css" asp-append-version="true" />
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-        theme: {
-        extend: {
-        colors: {
-        'mocidade-blue': '#4CA3ED',
-        'mocidade-dark': '#111827',
-        },
-        fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        title: ['Montserrat', 'sans-serif']
-        }
-        }
-        }
-        }
-    </script>
+    <style>
+        body { background-color: #f8f9fa; }
+        .bg-azul-escuro { background-color: #002244; }
+        .text-azul-escuro { color: #002244; }
+        .btn-primary-custom { background-color: #002244; color: white; border: none; transition: 0.3s; }
+        .btn-primary-custom:hover { background-color: #00152b; color: white; }
+        .nav-admin { color: #ffc107 !important; font-weight: bold; }
+    </style>
 </head>
-<body class="bg-mocidade-dark text-white font-sans min-h-screen flex flex-col">
-    
-    <main role="main" class="flex-grow">
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-azul-escuro shadow-sm">
+            <div class="container">
+                <a asp-page="/Index" class="navbar-brand fw-bold">🚌 Mocidade 015</a>
+                
+                <div class="d-flex align-items-center">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-page="/Admin/Index" class="nav-link nav-admin me-3">
+                                <i class="bi bi-shield-lock"></i> PAINEL ADMIN
+                            </a>
+                        }
+                        <span class="text-white-50 small me-3">Olá, @User.Identity.Name</span>
+                        <a asp-page="/Logout" class="btn btn-outline-light btn-sm">Sair</a>
+                    }
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    @if (User.Identity?.IsAuthenticated == true)
+{
+    <a asp-page="/Perfil" class="text-azul-escuro text-decoration-none me-3 d-flex align-items-center gap-1">
+    <i class="bi bi-person-circle fs-5"></i> 
+    <span class="small fw-semibold">Meu Perfil</span>
+</a>
+}
+
+    @* Removi o max-width: 450px daqui para as páginas de Dashboard e Admin poderem crescer *@
+    <main class="container py-5">
         @RenderBody()
     </main>
 
-    <footer class="bg-black py-6 text-center text-sm text-gray-400 mt-auto">
-        <div class="container mx-auto px-4">
-            <p>&copy; 2026 - Mocidade 015 - Todos os direitos reservados.</p>
-        </div>
-    </footer>
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

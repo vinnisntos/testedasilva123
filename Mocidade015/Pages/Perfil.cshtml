@@ -1,0 +1,67 @@
+﻿@page
+@model Mocidade015.Pages.App.PerfilModel
+@{
+    ViewData["Title"] = "Meu Perfil";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-0 rounded-4">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <div class="bg-azul-escuro text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 70px; height: 70px;">
+                            <i class="bi bi-person-fill fs-1"></i>
+                        </div>
+                        <h4 class="fw-bold text-azul-escuro">Dados Pessoais</h4>
+                        <p class="text-muted small">Mantenha seus dados de contato atualizados</p>
+                    </div>
+
+                    @if (TempData["Mensagem"] != null)
+                    {
+                        <div class="alert alert-success border-0 shadow-sm small mb-4">
+                            @TempData["Mensagem"]
+                        </div>
+                    }
+
+                    <form method="post">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-secondary">Nome Completo</label>
+                            <input asp-for="Input.Nome" class="form-control" placeholder="Seu nome" required />
+                            <span asp-validation-for="Input.Nome" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-secondary">E-mail</label>
+                            <input asp-for="Input.Email" class="form-control" placeholder="seu@email.com" required />
+                            <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-secondary">Seu RG ou CPF</label>
+                            <input asp-for="Input.Rg" class="form-control" placeholder="00.000.000-0" required />
+                            <span asp-validation-for="Input.Rg" class="text-danger small"></span>
+                        </div>
+
+                        <hr class="my-4 text-secondary opacity-25">
+                        
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-secondary text-danger">Nova Senha (deixe em branco para não alterar)</label>
+                            <input asp-for="Input.NovaSenha" type="password" class="form-control" placeholder="******" />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary-custom w-100 fw-bold py-2 mt-2">
+                            Salvar Alterações
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="text-center mt-3">
+                <a asp-page="/App/Dashboard" class="text-decoration-none small text-secondary">
+                    <i class="bi bi-arrow-left"></i> Voltar ao Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

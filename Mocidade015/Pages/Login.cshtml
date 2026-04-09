@@ -1,0 +1,35 @@
+﻿@page
+@model Mocidade015.Pages.LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="card shadow border-0 rounded-4">
+    <div class="card-body p-4">
+        <h3 class="text-azul-escuro fw-bold text-center mb-4">Acessar Conta</h3>
+        
+        @if (!ModelState.IsValid)
+        {
+            <div class="alert alert-danger py-2 small">
+                <div asp-validation-summary="All"></div>
+            </div>
+        }
+
+        <form method="post">
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label fw-semibold">E-mail</label>
+                <input asp-for="Email" type="email" class="form-control" placeholder="nome@email.com" required>
+            </div>
+            <div class="mb-4">
+                <label asp-for="Senha" class="form-label fw-semibold">Senha</label>
+                <input asp-for="Senha" type="password" class="form-control" placeholder="••••••••" required>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary-custom btn-lg fw-bold">Entrar</button>
+            </div>
+        </form>
+        <div class="text-center mt-3">
+            <a asp-page="/Cadastro" class="text-decoration-none text-muted small">Não tem conta? Cadastre-se aqui</a>
+        </div>
+    </div>
+</div>

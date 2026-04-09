@@ -1,0 +1,62 @@
+﻿@page "{onibusId:guid}"
+@model Mocidade015.Pages.App.EscolherAssentoModel
+@{
+    ViewData["Title"] = "Escolha sua Poltrona";
+}
+
+<div class="text-center mb-4">
+    <h4 class="fw-bold text-azul-escuro">Selecione o assento para:</h4>
+    <span class="badge bg-primary fs-6">👤 @Model.NomePassageiro</span>
+</div>
+
+@if (TempData["Erro"] != null)
+{
+    <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-4">
+        @TempData["Erro"]
+    </div>
+}
+
+<div class="bus-container shadow-lg p-4 rounded-5 bg-white mx-auto" style="max-width: 400px; border: 2px solid #eee;">
+    <div class="bus-front mb-5 text-center p-3 border-bottom">
+        <div class="d-inline-block p-2 bg-light rounded-circle shadow-sm">
+            <i class="bi bi-steering-wheel fs-3 text-secondary"></i>
+        </div>
+        <small class="d-block text-muted mt-2 fw-bold">FRENTE DO ÔNIBUS</small>
+    </div>
+
+    <div class="row row-cols-4 g-3">
+        @foreach (var assento in Model.Assentos)
+        {
+            <div class="col">
+                @if (assento.Ocupado)
+                {
+                    <button class="btn btn-secondary w-100 py-3 rounded-3 opacity-50 cursor-not-allowed" disabled>
+                        @assento.Numero
+                    </button>
+                }
+                else
+                {
+                    <form method="post">
+                        <input type="hidden" name="assentoId" value="@assento.Id" />
+                        <input type="hidden" name="onibusId" value="@Model.Onibus.Id" />
+                        <input type="hidden" name="acompanhanteId" value="@Model.AcompanhanteId" />
+                        <button type="submit" class="btn btn-outline-primary w-100 py-3 rounded-3 fw-bold shadow-sm hover-reserva">
+                            @assento.Numero
+                        </button>
+                    </form>
+                }
+            </div>
+            
+            @* Espaço do corredor após a segunda poltrona da fileira *@
+            @if (assento.Numero % 2 == 0 && assento.Numero % 4 != 0)
+            {
+                @* O corredor é visual, então não fazemos nada aqui e deixamos o grid agir *@
+            }
+        }
+    </div>
+</div>
+
+<style>
+    .cursor-not-allowed { cursor: not-allowed; }
+    .hover-reserva:hover { background-color: #0d6efd; color: white; transform: translateY(-2px); transition: 0.2s; }
+</style>

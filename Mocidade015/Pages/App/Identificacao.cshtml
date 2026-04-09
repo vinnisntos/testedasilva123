@@ -1,0 +1,40 @@
+﻿@page "{onibusId:guid}"
+@model Mocidade015.Pages.App.IdentificacaoModel
+@{
+    ViewData["Title"] = "Quem vai viajar?";
+}
+
+<div class="card shadow border-0 rounded-4">
+    <div class="card-body p-4">
+        <h3 class="fw-bold text-azul-escuro mb-3">Quem vai viajar?</h3>
+        <p class="text-muted">Selecione o passageiro para este ônibus.</p>
+
+        <form method="post">
+            <div class="list-group mb-4">
+                <label class="list-group-item d-flex gap-3 py-3">
+                    <input class="form-check-input flex-shrink-0" type="radio" name="PassageiroSelecionado" value="titular" checked>
+                    <span>
+                        <strong class="d-block">Eu mesmo (@User.Identity?.Name)</strong>
+                        <small class="text-muted">Passageiro principal da conta</small>
+                    </span>
+                </label>
+
+                @foreach (var acompanhante in Model.Acompanhantes)
+                {
+                    <label class="list-group-item d-flex gap-3 py-3">
+                        <input class="form-check-input flex-shrink-0" type="radio" name="PassageiroSelecionado" value="@acompanhante.Id">
+                        <span>
+                            <strong class="d-block">@acompanhante.Nome</strong>
+                            <small class="text-muted">RG/CPF: @acompanhante.RgCpf</small>
+                        </span>
+                    </label>
+                }
+            </div>
+
+            <div class="d-flex gap-2">
+                <a asp-page="/App/Acompanhantes" class="btn btn-outline-secondary w-50">Gerenciar Acompanhantes</a>
+                <button type="submit" class="btn btn-primary-custom w-50 fw-bold">Escolher Poltrona</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,86 +1,22 @@
 ﻿@page
-@model IndexModel
+@model Mocidade015.Pages.IndexModel
 @{
-    ViewData["Title"] = "Início";
+    ViewData["Title"] = "Página Inicial";
 }
 
-<div class="relative min-h-screen flex flex-col items-center justify-center bg-cover bg-center" style="background-image: url('/images/background-igreja.png');">
-    
-    <div class="absolute inset-0 bg-mocidade-dark bg-opacity-80"></div>
-
-    <div class="relative z-10 text-center px-4 max-w-3xl mx-auto mt-10">
+<div class="card shadow-lg border-0 rounded-4">
+    <div class="card-body p-5 text-center">
+        <h1 class="text-azul-escuro fw-bold mb-2">Bem-vindo!</h1>
+        <h5 class="text-secondary mb-4">Sistema de Reservas</h5>
         
-        <h1 class="font-title text-5xl md:text-7xl font-extrabold text-white tracking-tight drop-shadow-lg mb-2">
-            Mocidade <span class="text-mocidade-blue">015</span>
-        </h1>
-        <p class="text-gray-300 text-lg md:text-xl font-medium mb-8">
-            Sorocaba & Região
+        <p class="text-muted mb-4" style="font-size: 0.95rem;">
+            Garanta sua passagem para a viagem do dia <strong>26/07</strong> de forma rápida e segura.<br /><br />
+            Escolha seu terminal, selecione sua poltrona e pronto!
         </p>
 
-        <div class="bg-black bg-opacity-60 p-6 md:p-8 rounded-2xl border border-gray-700 backdrop-blur-sm mb-10 shadow-xl">
-            <h2 class="text-2xl font-bold mb-4 text-mocidade-blue">Excursão Oficial</h2>
-            <p class="text-gray-200 mb-6 text-left md:text-center leading-relaxed text-lg">
-                Junte-se a nós nesta visita especial em um dia cheio da presença de Deus, visitando mais uma parte da nossa irmandade. Serão apenas <strong class="text-white">64 lugares</strong> disponíveis em um ônibus executivo confortável.
-            </p>
-            <p class="text-gray-200 mb-6 text-left md:text-center leading-relaxed text-lg">
-                E o melhor! Exclusivamente organizado pela <strong>Mocidade 015</strong> com muito amor e carinho!
-             </p>
-               
-             <ul>
-                 <li class="flex items-start gap-3 mb-4">
-                     <span class="bg-mocidade-blue text-white w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 mt-1">1</span>
-                    <span class="text-gray-300 text-left text-lg">Data: 26 de Julho De 2026</span>
-                    </li>
-
-                <li class="flex items-start gap-3 mb-4">
-                    <span class="bg-mocidade-blue text-white w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 mt-1">2</span>
-                    <span class="text-gray-300 text-left text-lg">Destino: CCB Central Hortolândia</span>
-                </li>
-
-                <li class="flex items-start gap-3 mb-4">
-                    <span class="bg-mocidade-blue text-white w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 mt-1">3</span>
-                    <span class="text-gray-300 text-left text-lg">100% Automatizado</span>
-                </li>
-             </ul>
-
-
-            <p class="text-sm text-gray-400">
-                Garanta seu lugar e o de seus acompanhantes com segurança e praticidade.
-            </p>
-        </div>
-
-        <div class="flex flex-col items-center">
-            <div class="flex items-center gap-3 mb-6">
-                <input type="checkbox" id="termos" name="termos" class="w-5 h-5 rounded border-gray-500 text-mocidade-blue focus:ring-mocidade-blue cursor-pointer">
-                <label for="termos" class="text-sm text-gray-300 cursor-pointer select-none">
-                    Afirmo que li os termos de viagem e concordo com os mesmos.
-                </label>
-            </div>
-
-            <a href="/Cadastro" id="btnGarantir" class="px-10 py-4 bg-mocidade-blue hover:bg-blue-500 text-white font-bold text-xl rounded-full transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(76,163,237,0.4)]">
-                Garantir Meu Lugar
-            </a>
+        <div class="d-grid gap-3 mt-4">
+            <a asp-page="/Login" class="btn btn-primary-custom btn-lg rounded-3 fw-bold">Fazer Login</a>
+            <a asp-page="/Cadastro" class="text-decoration-none text-azul-escuro fw-semibold mt-2">Ainda não tem conta? Cadastre-se</a>
         </div>
     </div>
 </div>
-
-@section Scripts {
-    <script>
-        document.getElementById('btnGarantir').addEventListener('click', function(e) {
-            const checkboxTermos = document.getElementById('termos');
-            
-            if (!checkboxTermos.checked) {
-                e.preventDefault(); // Impede o link de abrir a página de cadastro
-                 
-                // Dá um alerta simples para o usuário
-                alert('Ei! Você precisa aceitar os termos de viagem para garantir seu lugar.');
-                
-                // Opcional: faz a caixinha piscar pra chamar atenção
-                checkboxTermos.classList.add('ring-2', 'ring-red-500', 'ring-offset-2', 'ring-offset-mocidade-dark');
-                setTimeout(() => {
-                    checkboxTermos.classList.remove('ring-2', 'ring-red-500', 'ring-offset-2', 'ring-offset-mocidade-dark');
-                }, 2000);
-            }
-        });
-    </script>
-}
