@@ -52,7 +52,7 @@
                                                 <span class="d-block fw-semibold">@(r.Acompanhante?.Nome ?? r.Usuario.Nome)</span>
                                                 <small class="text-muted">@(r.AcompanhanteId == null ? "Titular" : "Acompanhante")</small>
                                             </td>
-                                            <td class="small">@(r.Acompanhante?.RgCpf ?? "Ver no Perfil")</td>
+                                            <td class="small">@(r.Acompanhante?.RgCpf ?? r.Usuario.Rg)</td>
                                             <td>
                                                 <form method="post" asp-page-handler="CancelarReserva" asp-route-reservaId="@r.Id" 
                                                       onsubmit="return confirm('Deseja liberar este assento?');" class="d-inline">
