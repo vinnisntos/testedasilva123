@@ -29,7 +29,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.LoginPath = "/Login";
         options.AccessDeniedPath = "/AcessoNegado"; // Crie essa página depois se quiser
-        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.ExpireTimeSpan = TimeSpan.FromHours(30);
         // Garante que o cookie funcione mesmo por trás do proxy do Render
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     });
@@ -44,7 +44,7 @@ builder.Services.AddRazorPages(options =>
 {
     options.Conventions.AuthorizeFolder("/App");
     // Aqui a trava: Só entra na pasta Admin quem tiver a Role "Admin"
-    options.Conventions.AuthorizeFolder("/Adm", "RequireAdminRole");
+    options.Conventions.AuthorizeFolder("/Admin", "RequireAdminRole");
 });
 
 // --- CONFIGURAÇÃO PARA O RENDER (PROXY REVERSO) ---
