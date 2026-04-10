@@ -12,7 +12,7 @@ namespace Mocidade015.Models
         public string? Rg { get; set; }
         public string SenhaHash { get; set; } = string.Empty;
 
-        // No banco, para os 3 admins, mude de "Cliente" para "Admin"
+        // Advertendo: para alterar a role de "Cliente para Admin" é necessario fazer isso manualmente no banco de dados.
         public string Role { get; set; } = "Cliente";
 
         public DateTime DataCriacao { get; set; } = DateTime.UtcNow;

@@ -19,6 +19,7 @@ namespace Mocidade015.Pages
             public string Nome { get; set; } = "";
             public string Email { get; set; } = "";
             public string Senha { get; set; } = "";
+            public string Rg { get; set; } = "";
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -26,10 +27,17 @@ namespace Mocidade015.Pages
             if (!ModelState.IsValid) return Page();
 
             // Verifica se o e-mail já existe
-            var existe = await _context.Usuarios.AnyAsync(u => u.Email == Input.Email);
-            if (existe)
+            var existeemail = await _context.Usuarios.AnyAsync(u => u.Email == Input.Email);
+            if (existeemail)
             {
                 ModelState.AddModelError(string.Empty, "Este e-mail já está cadastrado.");
+                return Page();
+            }
+
+            var existerg= await _context.Usuarios.AnyAsync(u => u.Rg == Input.Rg);
+            if (existerg)
+            {
+                ModelState.AddModelError(string.Empty, "Este RG/CPF já está cadastrado");
                 return Page();
             }
 
@@ -38,6 +46,7 @@ namespace Mocidade015.Pages
             {
                 Id = Guid.NewGuid(),
                 Nome = Input.Nome,
+                Rg = Input.Rg,
                 Email = Input.Email,
                 SenhaHash = BCrypt.Net.BCrypt.HashPassword(Input.Senha),
                 Role = "Cliente"

@@ -12,13 +12,13 @@ namespace Mocidade015.Data
         public DbSet<Assento> Assentos { get; set; }
         public DbSet<Acompanhante> Acompanhantes { get; set; }
         public DbSet<Reserva> Reservas { get; set; }
-        public DbSet<ListaEspera> ListaEspera { get; set; } // Ajustado para plural
+        public DbSet<ListaEspera> ListaEspera { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // 1. CONFIGURAÇÃO GLOBAL UTC (Para o Postgres não reclamar das datas)
+            // 1. CONFIGURAÇÃO GLOBAL UTC (Para o Postgres não reclamar das datas) Conversão
             var dateTimeConverter = new Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<DateTime, DateTime>(
                 v => v.Kind == DateTimeKind.Utc ? v : DateTime.SpecifyKind(v, DateTimeKind.Utc),
                 v => v.Kind == DateTimeKind.Utc ? v : DateTime.SpecifyKind(v, DateTimeKind.Utc));
@@ -40,6 +40,7 @@ namespace Mocidade015.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id).HasColumnName("id");
                 entity.Property(e => e.Nome).HasColumnName("nome");
+
                 // Dentro do modelBuilder.Entity<Usuario>
                 entity.Property(e => e.Rg).HasColumnName("rg");
                 entity.Property(e => e.Email).HasColumnName("email");
@@ -82,7 +83,7 @@ namespace Mocidade015.Data
                 entity.Property(e => e.RgCpf).HasColumnName("rgcpf");
             });
 
-            // 6. MAPEAMENTO RESERVAS (AQUI ESTAVA O CONFLITO)
+            // 6. MAPEAMENTO RESERVAS
             modelBuilder.Entity<Reserva>(entity => {
                 entity.ToTable("Reservas");
                 entity.HasKey(e => e.Id);
