@@ -44,7 +44,7 @@ builder.Services.AddRazorPages(options =>
 {
     options.Conventions.AuthorizeFolder("/App");
     // Aqui a trava: Só entra na pasta Admin quem tiver a Role "Admin"
-    options.Conventions.AuthorizeFolder("/Admin", "RequireAdminRole");
+    options.Conventions.AuthorizeFolder("/Adm", "RequireAdminRole");
 });
 
 // --- CONFIGURAÇÃO PARA O RENDER (PROXY REVERSO) ---
