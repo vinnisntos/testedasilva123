@@ -29,7 +29,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.LoginPath = "/Login";
         options.AccessDeniedPath = "/AcessoNegado"; // Crie essa página depois se quiser
-        options.ExpireTimeSpan = TimeSpan.FromHours(30);
+        options.ExpireTimeSpan = TimeSpan.FromHours(5);
         // Garante que o cookie funcione mesmo por trás do proxy do Render
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     });
