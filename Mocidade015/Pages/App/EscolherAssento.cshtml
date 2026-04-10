@@ -11,32 +11,39 @@
 
 @if (TempData["Erro"] != null)
 {
-    <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-4">
+    <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-4 text-center">
         @TempData["Erro"]
     </div>
 }
 
-<div class="bus-container shadow-lg p-4 rounded-5 bg-white mx-auto" style="max-width: 400px; border: 2px solid #eee;">
-    <div class="bus-front mb-5 text-center p-3 border-bottom">
+<div class="bus-container shadow-lg p-4 rounded-5 bg-white mx-auto" style="max-width: 450px; border: 2px solid #eee;">
+    <div class="bus-front mb-4 text-center p-3 border-bottom">
         <div class="d-inline-block p-2 bg-light rounded-circle shadow-sm">
             <i class="bi bi-steering-wheel fs-3 text-secondary"></i>
         </div>
         <small class="d-block text-muted mt-2 fw-bold">FRENTE DO ÔNIBUS</small>
     </div>
 
-    <div class="row row-cols-4 g-3">
+    <div class="row row-cols-5 g-2 justify-content-center">
+        
         @foreach (var assento in Model.Assentos)
         {
             <div class="col">
-                @if (assento.Ocupado)
+                @if (Model.AssentoAtualId == assento.Id)
                 {
-                    <button class="btn btn-secondary w-100 py-3 rounded-3 opacity-50 cursor-not-allowed" disabled>
+                    <button class="btn btn-success w-100 py-3 rounded-3 shadow-sm cursor-not-allowed" disabled title="Este é o seu assento atual">
+                        @assento.Numero<br><small style="font-size: 0.7em;">Seu</small>
+                    </button>
+                }
+                else if (Model.AssentosOcupadosIds.Contains(assento.Id))
+                {
+                    <button class="btn btn-secondary w-100 py-3 rounded-3 opacity-50 cursor-not-allowed" disabled title="Assento indisponível">
                         @assento.Numero
                     </button>
                 }
                 else
                 {
-                    <form method="post">
+                    <form method="post" class="m-0">
                         <input type="hidden" name="assentoId" value="@assento.Id" />
                         <input type="hidden" name="onibusId" value="@Model.Onibus.Id" />
                         <input type="hidden" name="acompanhanteId" value="@Model.AcompanhanteId" />
@@ -47,12 +54,18 @@
                 }
             </div>
             
-            @* Espaço do corredor após a segunda poltrona da fileira *@
-            @if (assento.Numero % 2 == 0 && assento.Numero % 4 != 0)
+            @* A mágica do corredor: A cada 2 poltronas, insere uma div vazia na grade de 5 colunas *@
+            @if (assento.Numero % 4 == 2)
             {
-                @* O corredor é visual, então não fazemos nada aqui e deixamos o grid agir *@
+                <div class="col"></div>
             }
         }
+    </div>
+    
+    <div class="mt-4 pt-3 border-top d-flex justify-content-between text-muted" style="font-size: 0.85rem;">
+        <span><i class="bi bi-square-fill text-success"></i> Seu Lugar</span>
+        <span><i class="bi bi-square-fill text-secondary"></i> Ocupado</span>
+        <span><i class="bi bi-square text-primary"></i> Livre</span>
     </div>
 </div>
 

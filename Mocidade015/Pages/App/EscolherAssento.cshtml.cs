@@ -24,8 +24,17 @@ namespace Mocidade015.Pages.App
         public Guid? AcompanhanteId { get; set; }
         public string NomePassageiro { get; set; } = "Titular";
 
+        // Propriedade para destacar a poltrona atual
+        public Guid? AssentoAtualId { get; set; }
+
+        // Propriedade NOVA: Lista com os IDs de quem já pegou lugar
+        public List<Guid> AssentosOcupadosIds { get; set; } = new();
+
         public async Task<IActionResult> OnGetAsync(Guid onibusId, Guid? acompanhanteId)
         {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(userIdStr, out Guid userId)) return RedirectToPage("/Index");
+
             Onibus = await _context.Onibus.FirstOrDefaultAsync(o => o.Id == onibusId);
             if (Onibus == null) return RedirectToPage("/App/Dashboard");
 
@@ -36,7 +45,6 @@ namespace Mocidade015.Pages.App
 
             AcompanhanteId = acompanhanteId;
 
-            // Busca o nome para mostrar na tela (Perfume de UI)
             if (acompanhanteId.HasValue)
             {
                 var acompanhante = await _context.Acompanhantes.FindAsync(acompanhanteId);
@@ -47,6 +55,23 @@ namespace Mocidade015.Pages.App
                 NomePassageiro = User.Identity?.Name ?? "Você";
             }
 
+            // Puxa a lista de TODOS os assentos ocupados neste ônibus
+            AssentosOcupadosIds = await _context.Reservas
+                .Where(r => r.Assento.OnibusId == onibusId)
+                .Select(r => r.AssentoId)
+                .ToListAsync();
+
+            // Verifica se a pessoa logada já tem uma poltrona reservada
+            var reservaExistente = await _context.Reservas
+                .FirstOrDefaultAsync(r => r.Assento.OnibusId == onibusId &&
+                                          r.UsuarioId == userId &&
+                                          r.AcompanhanteId == acompanhanteId);
+
+            if (reservaExistente != null)
+            {
+                AssentoAtualId = reservaExistente.AssentoId;
+            }
+
             return Page();
         }
 
@@ -55,21 +80,46 @@ namespace Mocidade015.Pages.App
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!Guid.TryParse(userIdStr, out Guid userId)) return RedirectToPage("/Index");
 
-            // CHAMA O SERVIÇO COM A NOVA REGRA
-            bool sucesso = await _reservaService.ReservarAssentoAsync(userId, assentoId, acompanhanteId);
+            // Defesa: Verifica se o assento clicado já tem dono
+            bool assentoOcupado = await _context.Reservas
+                .AnyAsync(r => r.AssentoId == assentoId);
 
-            if (sucesso)
+            if (assentoOcupado)
             {
-                // Se o ônibus lotou, o serviço já gerou o próximo automaticamente
-                var o = await _context.Onibus.FindAsync(onibusId);
-                if (o != null) await _reservaService.VerificarEGerarNovoOnibusAsync(o.TerminalSaida);
-
-                return RedirectToPage("/App/Validado");
+                TempData["Erro"] = "Alguém foi mais rápido no gatilho. Escolha outro assento.";
+                return RedirectToPage(new { onibusId, acompanhanteId });
             }
 
-            // Se chegou aqui, é porque a poltrona foi pega ou a pessoa já tem reserva no ônibus
-            TempData["Erro"] = "Não foi possível realizar a reserva. Verifique se este passageiro já possui um lugar neste ônibus ou se o assento foi ocupado agora.";
-            return RedirectToPage(new { onibusId, acompanhanteId });
+            var reservaExistente = await _context.Reservas
+                .FirstOrDefaultAsync(r => r.Assento.OnibusId == onibusId &&
+                                          r.UsuarioId == userId &&
+                                          r.AcompanhanteId == acompanhanteId);
+
+            if (reservaExistente != null)
+            {
+                // Altera o assento
+                reservaExistente.AssentoId = assentoId;
+                await _context.SaveChangesAsync();
+
+                TempData["Sucesso"] = "Assento alterado com sucesso!";
+                return RedirectToPage("/App/Validado");
+            }
+            else
+            {
+                // Cria nova reserva
+                bool sucesso = await _reservaService.ReservarAssentoAsync(userId, assentoId, acompanhanteId);
+
+                if (sucesso)
+                {
+                    var o = await _context.Onibus.FindAsync(onibusId);
+                    if (o != null) await _reservaService.VerificarEGerarNovoOnibusAsync(o.TerminalSaida);
+
+                    return RedirectToPage("/App/Validado");
+                }
+
+                TempData["Erro"] = "Não foi possível realizar a reserva.";
+                return RedirectToPage(new { onibusId, acompanhanteId });
+            }
         }
     }
 }
