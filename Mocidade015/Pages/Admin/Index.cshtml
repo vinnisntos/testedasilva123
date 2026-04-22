@@ -40,6 +40,7 @@
                                         <th class="ps-3">Poltrona</th>
                                         <th>Passageiro</th>
                                         <th>Documento</th>
+                                        <th>Telefone</th>
                                         <th>Ações</th>
                                     </tr>
                                 </thead>
@@ -53,6 +54,7 @@
                                                 <small class="text-muted">@(r.AcompanhanteId == null ? "Titular" : "Acompanhante")</small>
                                             </td>
                                             <td class="small">@(r.Acompanhante?.RgCpf ?? r.Usuario.Rg)</td>
+                                            <td class="small">@(r.Acompanhante?.Telefone ?? r.Usuario?.Telefone ?? "-")</td>
                                             <td>
                                                 <form method="post" asp-page-handler="CancelarReserva" asp-route-reservaId="@r.Id" 
                                                       onsubmit="return confirm('Deseja liberar este assento?');" class="d-inline">
@@ -82,6 +84,7 @@
                         <tr>
                             <th class="ps-4">Solicitante</th>
                             <th>Email</th>
+                            <th>Telefone</th>
                             <th>Terminal</th>
                             <th>Data/Hora</th>
                         </tr>
@@ -89,13 +92,14 @@
                     <tbody>
                         @if (!Model.FilaEspera.Any())
                         {
-                            <tr><td colspan="4" class="text-center py-4 text-muted">Ninguém na espera por enquanto.</td></tr>
+                            <tr><td colspan="5" class="text-center py-4 text-muted">Ninguém na espera por enquanto.</td></tr>
                         }
                         @foreach (var espera in Model.FilaEspera)
                         {
                             <tr>
                                 <td class="ps-4 fw-bold">@espera.Usuario?.Nome</td>
                                 <td>@espera.Usuario?.Email</td>
+                                <td>@(espera.Usuario?.Telefone ?? "-")</td>
                                 <td><span class="badge bg-warning text-dark">@espera.TerminalDesejado</span></td>
                                 <td class="small text-muted">@espera.DataSolicitacao.ToString("dd/MM HH:mm")</td>
                             </tr>
