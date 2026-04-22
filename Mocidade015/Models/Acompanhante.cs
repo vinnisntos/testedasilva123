@@ -8,6 +8,9 @@ namespace Mocidade015.Models
         public Guid UsuarioResponsavelId { get; set; }
         public string Nome { get; set; } = string.Empty;
         public string? RgCpf { get; set; }
+        
+        // Campo adicionado
+        public string? Telefone { get; set; }
 
         public Usuario UsuarioResponsavel { get; set; } = null!;
     }

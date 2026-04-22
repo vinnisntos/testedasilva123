@@ -22,6 +22,7 @@ namespace Mocidade015.Pages.App
             public string Nome { get; set; } = "";
             public string Email { get; set; } = "";
             public string Rg { get; set; } = "";
+            public string? Telefone { get; set; } // Adicionado
             public string? NovaSenha { get; set; }
         }
 
@@ -36,6 +37,7 @@ namespace Mocidade015.Pages.App
             Input.Nome = usuario.Nome;
             Input.Email = usuario.Email;
             Input.Rg = usuario.Rg ?? "";
+            Input.Telefone = usuario.Telefone; // Adicionado
 
             return Page();
         }
@@ -53,7 +55,7 @@ namespace Mocidade015.Pages.App
             usuario.Nome = Input.Nome;
             usuario.Email = Input.Email;
             usuario.Rg = Input.Rg;
-
+            usuario.Telefone = Input.Telefone; // Adicionado
 
             // Se digitou senha nova, faz o Hash
             if (!string.IsNullOrWhiteSpace(Input.NovaSenha))

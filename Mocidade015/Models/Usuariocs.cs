@@ -10,6 +10,10 @@ namespace Mocidade015.Models
         public string Nome { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string? Rg { get; set; }
+        
+        // Campo adicionado
+        public string? Telefone { get; set; } 
+        
         public string SenhaHash { get; set; } = string.Empty;
 
         // Advertendo: para alterar a role de "Cliente para Admin" é necessario fazer isso manualmente no banco de dados.

@@ -19,6 +19,10 @@
                             <label class="form-label small fw-bold">RG ou CPF</label>
                             <input asp-for="NovoAcompanhante.RgCpf" class="form-control" placeholder="00.000.000-0" required />
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Telefone</label>
+                            <input asp-for="NovoAcompanhante.Telefone" class="form-control" placeholder="(15) 99999-9999" />
+                        </div>
                         <button type="submit" class="btn btn-primary-custom w-100 fw-bold">Cadastrar</button>
                     </form>
                 </div>
@@ -42,7 +46,7 @@
                                 <div class="list-group-item d-flex justify-content-between align-items-center px-0">
                                     <div>
                                         <h6 class="mb-0 fw-bold">@item.Nome</h6>
-                                        <small class="text-muted">Doc: @item.RgCpf</small>
+                                        <small class="text-muted">Doc: @item.RgCpf | Tel: @(item.Telefone ?? "Não informado")</small>
                                     </div>
                                     <form method="post" asp-page-handler="Delete" asp-route-id="@item.Id">
                                         <button class="btn btn-link text-danger p-0">

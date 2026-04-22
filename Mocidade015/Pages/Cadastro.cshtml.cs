@@ -20,6 +20,9 @@ namespace Mocidade015.Pages
             public string Email { get; set; } = "";
             public string Senha { get; set; } = "";
             public string Rg { get; set; } = "";
+            
+            // Campo adicionado para o form HTML conseguir enxergar
+            public string? Telefone { get; set; } 
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -48,6 +51,7 @@ namespace Mocidade015.Pages
                 Nome = Input.Nome,
                 Rg = Input.Rg,
                 Email = Input.Email,
+                Telefone = Input.Telefone, // Passando o dado da tela pro banco
                 SenhaHash = BCrypt.Net.BCrypt.HashPassword(Input.Senha),
                 Role = "Cliente"
             };
