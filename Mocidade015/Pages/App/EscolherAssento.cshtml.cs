@@ -38,12 +38,14 @@ namespace Mocidade015.Pages.App
             Onibus = await _context.Onibus.FirstOrDefaultAsync(o => o.Id == onibusId);
             if (Onibus == null) return RedirectToPage("/App/Dashboard");
 
-            // VERIFICA SE O ÔNIBUS ESTÁ CHEIO
-            var assentosDisponiveis = await _reservaService.GetAssentosDisponiveisCountAsync(onibusId);
+            // VERIFICA SE O ÔNIBUS ESTÁ CHEIO (64/64 lugares)
+            var assentosOcupadosCount = await _context.Assentos
+                .Where(a => a.OnibusId == onibusId && a.Ocupado)
+                .CountAsync();
 
-            if (assentosDisponiveis == 0)
+            if (assentosOcupadosCount >= Onibus.LotacaoMaxima)
             {
-                // Ônibus lotado - redireciona para lista de espera
+                // Ônibus lotado (64/64) - redireciona para lista de espera
                 return RedirectToPage("/App/ListaEspera", new { terminal = Onibus.TerminalSaida });
             }
 
@@ -88,6 +90,20 @@ namespace Mocidade015.Pages.App
         {
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!Guid.TryParse(userIdStr, out Guid userId)) return RedirectToPage("/Index");
+
+            // VERIFICAÇÃO DUPLA: Ônibus está cheio (64/64)?
+            var onibus = await _context.Onibus.FindAsync(onibusId);
+            if (onibus != null)
+            {
+                var assentosOcupadosCount = await _context.Assentos
+                    .Where(a => a.OnibusId == onibusId && a.Ocupado)
+                    .CountAsync();
+
+                if (assentosOcupadosCount >= onibus.LotacaoMaxima)
+                {
+                    return RedirectToPage("/App/ListaEspera", new { terminal = onibus.TerminalSaida });
+                }
+            }
 
             // Defesa: Verifica se o assento clicado já tem dono
             bool assentoOcupado = await _context.Reservas
