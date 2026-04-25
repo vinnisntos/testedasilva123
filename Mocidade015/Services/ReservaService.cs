@@ -104,13 +104,13 @@ namespace Mocidade015.Services
                     TerminalSaida = terminal,
                     HorarioSaida = terminal == "Santo Antônio" ? new TimeSpan(11, 40, 0) : new TimeSpan(12, 00, 0),
                     DataViagem = new DateTime(2026, 07, 26, 0, 0, 0, DateTimeKind.Utc),
-                    LotacaoMaxima = 48
+                    LotacaoMaxima = 64
                 };
 
                 _context.Onibus.Add(novoOnibus);
                 await _context.SaveChangesAsync();
 
-                for (int i = 1; i <= 48; i++)
+                for (int i = 1; i <= 64; i++)
                 {
                     _context.Assentos.Add(new Assento { Id = Guid.NewGuid(), OnibusId = novoOnibus.Id, Numero = i, Ocupado = false });
                 }
