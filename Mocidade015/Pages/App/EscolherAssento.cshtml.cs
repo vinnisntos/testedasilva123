@@ -38,6 +38,15 @@ namespace Mocidade015.Pages.App
             Onibus = await _context.Onibus.FirstOrDefaultAsync(o => o.Id == onibusId);
             if (Onibus == null) return RedirectToPage("/App/Dashboard");
 
+            // VERIFICA SE O ÔNIBUS ESTÁ CHEIO
+            var assentosDisponiveis = await _reservaService.GetAssentosDisponiveisCountAsync(onibusId);
+
+            if (assentosDisponiveis == 0)
+            {
+                // Ônibus lotado - redireciona para lista de espera
+                return RedirectToPage("/App/ListaEspera", new { terminal = Onibus.TerminalSaida });
+            }
+
             Assentos = await _context.Assentos
                 .Where(a => a.OnibusId == onibusId)
                 .OrderBy(a => a.Numero)

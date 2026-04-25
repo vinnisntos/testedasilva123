@@ -7,7 +7,9 @@ namespace Mocidade015.Services
     {
         Task<bool> ReservarAssentoAsync(Guid usuarioId, Guid assentoId, Guid? acompanhanteId);
         Task VerificarEGerarNovoOnibusAsync(string terminal);
-
         Task<bool> CancelarReservaAsync(Guid reservaId);
+        Task<bool> AdicionarNaListaDeEsperaAsync(Guid usuarioId, string terminalDesejado);
+        Task<bool> JaEstaNaListaDeEsperaAsync(Guid usuarioId, string terminalDesejado);
+        Task<int> GetAssentosDisponiveisCountAsync(Guid onibusId);
     }
 }

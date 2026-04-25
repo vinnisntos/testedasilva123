@@ -1,0 +1,72 @@
+@page "{terminal}"
+@model Mocidade015.Pages.App.ListaEsperaModel
+@{
+    ViewData["Title"] = "Lista de Espera";
+}
+
+<div class="card shadow border-0 rounded-4 mx-auto" style="max-width: 500px;">
+    <div class="card-body p-5 text-center">
+        <div class="mb-4">
+            <i class="bi bi-clock-history text-warning" style="font-size: 3rem;"></i>
+        </div>
+
+        <h3 class="fw-bold text-azul-escuro mb-3">Ônibus Lotado</h3>
+        <p class="text-muted mb-4">
+            Todos os assentos do terminal <strong>@Model.Terminal</strong> estão ocupados.
+        </p>
+
+        @if (TempData["Erro"] != null)
+        {
+            <div class="alert alert-warning border-0 shadow-sm rounded-3 mb-4">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                @TempData["Erro"]
+            </div>
+        }
+
+        @if (TempData["Sucesso"] != null)
+        {
+            <div class="alert alert-success border-0 shadow-sm rounded-3 mb-4">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                @TempData["Sucesso"]
+            </div>
+        }
+
+        @if (Model.JaEstaNaLista)
+        {
+            <div class="alert alert-info border-0 shadow-sm rounded-3 mb-4">
+                <i class="bi bi-info-circle-fill me-2"></i>
+                Você já está na lista de espera para o terminal <strong>@Model.Terminal</strong>.
+            </div>
+            <div class="alert alert-warning border-0 shadow-sm rounded-3">
+                <strong>Sua posição:</strong> @(Model.PosicaoNaLista)º
+            </div>
+        }
+        else
+        {
+            <p class="mb-4">
+                Queremos que você viaje conosco! Entre na lista de espera e será notificado quando houver assentos disponíveis.
+            </p>
+
+            <form method="post" class="d-grid gap-2">
+                <input type="hidden" name="terminal" value="@Model.Terminal" />
+                <button type="submit" class="btn btn-warning btn-lg fw-bold">
+                    <i class="bi bi-plus-circle me-2"></i>Entrar na Lista de Espera
+                </button>
+            </form>
+        }
+
+        <div class="mt-4 pt-3 border-top">
+            <a asp-page="/App/Dashboard" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Voltar ao Dashboard
+            </a>
+        </div>
+
+        @if (Model.PessoasNaFrente > 0 && !Model.JaEstaNaLista)
+        {
+            <div class="mt-3 text-muted small">
+                <i class="bi bi-people-fill me-1"></i>
+                Há @Model.PessoasNaFrente pessoa(s) na sua frente
+            </div>
+        }
+    </div>
+</div>

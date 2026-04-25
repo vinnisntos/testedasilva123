@@ -117,5 +117,50 @@ namespace Mocidade015.Services
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<bool> AdicionarNaListaDeEsperaAsync(Guid usuarioId, string terminalDesejado)
+        {
+            // Verifica se já está na lista de espera para este terminal
+            var jaEstaNaLista = await _context.ListaEspera
+                .AnyAsync(l => l.UsuarioId == usuarioId && l.TerminalDesejado == terminalDesejado);
+
+            if (jaEstaNaLista) return false;
+
+            // Verifica se já tem reserva em algum assento deste terminal
+            var jaTemReserva = await _context.Reservas
+                .Include(r => r.Assento)
+                .ThenInclude(a => a.Onibus)
+                .AnyAsync(r => r.UsuarioId == usuarioId &&
+                               r.Assento.Onibus != null &&
+                               r.Assento.Onibus.TerminalSaida == terminalDesejado);
+
+            if (jaTemReserva) return false;
+
+            var entradaNaLista = new ListaEspera
+            {
+                Id = Guid.NewGuid(),
+                UsuarioId = usuarioId,
+                TerminalDesejado = terminalDesejado,
+                DataSolicitacao = DateTime.UtcNow
+            };
+
+            _context.ListaEspera.Add(entradaNaLista);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> JaEstaNaListaDeEsperaAsync(Guid usuarioId, string terminalDesejado)
+        {
+            return await _context.ListaEspera
+                .AnyAsync(l => l.UsuarioId == usuarioId && l.TerminalDesejado == terminalDesejado);
+        }
+
+        public async Task<int> GetAssentosDisponiveisCountAsync(Guid onibusId)
+        {
+            return await _context.Assentos
+                .Include(a => a.Onibus)
+                .Where(a => a.OnibusId == onibusId && !a.Ocupado)
+                .CountAsync();
+        }
     }
 }
