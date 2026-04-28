@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mocidade015", "Mocidade015\Mocidade015.csproj", "{24CB3141-9E10-76ED-4BD1-39ECFF19E70D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{24CB3141-9E10-76ED-4BD1-39ECFF19E70D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24CB3141-9E10-76ED-4BD1-39ECFF19E70D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24CB3141-9E10-76ED-4BD1-39ECFF19E70D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24CB3141-9E10-76ED-4BD1-39ECFF19E70D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {91F67AC0-DB9F-4734-924C-6CB687E5D3A1}
+	EndGlobalSection
+EndGlobal
