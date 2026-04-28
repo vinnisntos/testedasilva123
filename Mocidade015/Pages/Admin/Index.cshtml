@@ -20,7 +20,12 @@
     {
         <div class="alert alert-success border-0 shadow-sm rounded-3">@TempData["Mensagem"]</div>
     }
+    @if (TempData["Erro"] != null)
+    {
+        <div class="alert alert-danger border-0 shadow-sm rounded-3">@TempData["Erro"]</div>
+    }
 
+    @* SEÇÃO DOS ÔNIBUS (Mantida) *@
     <div class="row g-4 mb-5">
         @foreach (var onibus in Model.RelatorioOnibus)
         {
@@ -74,7 +79,7 @@
         }
     </div>
 
-    @* SEÇÃO: LISTA DE ESPERA *@
+    @* SEÇÃO: LISTA DE ESPERA ATUALIZADA *@
     <div class="mt-5 d-print-none">
         <h4 class="fw-bold text-azul-escuro mb-3">⏳ Lista de Espera</h4>
         <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
@@ -87,12 +92,13 @@
                             <th>Telefone</th>
                             <th>Terminal</th>
                             <th>Data/Hora</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (!Model.FilaEspera.Any())
                         {
-                            <tr><td colspan="5" class="text-center py-4 text-muted">Ninguém na espera por enquanto.</td></tr>
+                            <tr><td colspan="6" class="text-center py-4 text-muted">Ninguém na espera por enquanto.</td></tr>
                         }
                         @foreach (var espera in Model.FilaEspera)
                         {
@@ -102,6 +108,14 @@
                                 <td>@(espera.Usuario?.Telefone ?? "-")</td>
                                 <td><span class="badge bg-warning text-dark">@espera.TerminalDesejado</span></td>
                                 <td class="small text-muted">@espera.DataSolicitacao.ToString("dd/MM HH:mm")</td>
+                                <td>
+                                    <form method="post" asp-page-handler="RemoverDaEspera" asp-route(esperaId)="@espera.Id"
+                                          onsubmit="return confirm('Remover @espera.Usuario?.Nome da lista de espera?');">
+                                        <button class="btn btn-outline-danger btn-sm border-0">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
                             </tr>
                         }
                     </tbody>

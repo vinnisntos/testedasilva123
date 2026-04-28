@@ -23,7 +23,6 @@ public class IndexModel : PageModel
 
     public async Task OnGetAsync()
     {
-        // 1. Carrega os ônibus e as reservas vinculadas aos assentos
         RelatorioOnibus = await _context.Onibus
             .OrderBy(o => o.Numero)
             .Select(o => new OnibusRelatorioDTO
@@ -41,7 +40,6 @@ public class IndexModel : PageModel
                     .ToList()
             }).ToListAsync();
 
-        // 2. Carrega a Lista de Espera (Propriedade do seu AppDbContext)
         FilaEspera = await _context.ListaEspera
             .Include(l => l.Usuario)
             .OrderBy(l => l.DataSolicitacao)
@@ -54,6 +52,25 @@ public class IndexModel : PageModel
 
         if (sucesso) TempData["Mensagem"] = "Reserva cancelada com sucesso! O assento agora está vago.";
         else TempData["Erro"] = "Erro ao tentar cancelar a reserva.";
+
+        return RedirectToPage();
+    }
+
+    // NOVA LÓGICA: Remover da Lista de Espera
+    public async Task<IActionResult> OnPostRemoverDaEsperaAsync(Guid esperaId)
+    {
+        var registro = await _context.ListaEspera.FindAsync(esperaId);
+        
+        if (registro != null)
+        {
+            _context.ListaEspera.Remove(registro);
+            await _context.SaveChangesAsync();
+            TempData["Mensagem"] = "Solicitação removida da lista de espera.";
+        }
+        else
+        {
+            TempData["Erro"] = "Não foi possível encontrar este registro na lista.";
+        }
 
         return RedirectToPage();
     }
