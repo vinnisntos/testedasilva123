@@ -20,9 +20,11 @@ public class IndexModel : PageModel
 
     public List<OnibusRelatorioDTO> RelatorioOnibus { get; set; } = new();
     public List<ListaEspera> FilaEspera { get; set; } = new();
+    public List<ResumoEsperaDTO> ResumoEspera { get; set; } = new();
 
     public async Task OnGetAsync()
     {
+        // 1. Relatório de Ônibus
         RelatorioOnibus = await _context.Onibus
             .OrderBy(o => o.Numero)
             .Select(o => new OnibusRelatorioDTO
@@ -40,38 +42,39 @@ public class IndexModel : PageModel
                     .ToList()
             }).ToListAsync();
 
+        // 2. Fila detalhada
         FilaEspera = await _context.ListaEspera
             .Include(l => l.Usuario)
             .OrderBy(l => l.DataSolicitacao)
             .ToListAsync();
+
+        // 3. Resumo para as barrinhas de progresso
+        ResumoEspera = await _context.ListaEspera
+            .GroupBy(l => l.TerminalDesejado)
+            .Select(g => new ResumoEsperaDTO
+            {
+                Terminal = g.Key,
+                Total = g.Count()
+            }).ToListAsync();
     }
 
     public async Task<IActionResult> OnPostCancelarReservaAsync(Guid reservaId)
     {
         var sucesso = await _reservaService.CancelarReservaAsync(reservaId);
-
-        if (sucesso) TempData["Mensagem"] = "Reserva cancelada com sucesso! O assento agora está vago.";
+        if (sucesso) TempData["Mensagem"] = "Reserva cancelada com sucesso!";
         else TempData["Erro"] = "Erro ao tentar cancelar a reserva.";
-
         return RedirectToPage();
     }
 
-    // NOVA LÓGICA: Remover da Lista de Espera
     public async Task<IActionResult> OnPostRemoverDaEsperaAsync(Guid esperaId)
     {
         var registro = await _context.ListaEspera.FindAsync(esperaId);
-        
         if (registro != null)
         {
             _context.ListaEspera.Remove(registro);
             await _context.SaveChangesAsync();
-            TempData["Mensagem"] = "Solicitação removida da lista de espera.";
+            TempData["Mensagem"] = "Solicitação removida da lista.";
         }
-        else
-        {
-            TempData["Erro"] = "Não foi possível encontrar este registro na lista.";
-        }
-
         return RedirectToPage();
     }
 }
@@ -84,4 +87,10 @@ public class OnibusRelatorioDTO
     public int LotacaoMaxima { get; set; }
     public List<Reserva> Reservas { get; set; } = new();
     public int TotalOcupados => Reservas.Count;
+}
+
+public class ResumoEsperaDTO
+{
+    public string Terminal { get; set; } = "";
+    public int Total { get; set; }
 }

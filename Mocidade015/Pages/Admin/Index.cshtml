@@ -9,7 +9,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold text-azul-escuro m-0">Painel Administrativo</h2>
-            <p class="text-muted small">Gerencie passageiros e lista de espera para 26/07</p>
+            <p class="text-muted small">Gerencie passageiros e lista de espera</p>
         </div>
         <button onclick="window.print()" class="btn btn-dark d-print-none shadow-sm">
             <i class="bi bi-printer"></i> Imprimir Listas
@@ -20,12 +20,39 @@
     {
         <div class="alert alert-success border-0 shadow-sm rounded-3">@TempData["Mensagem"]</div>
     }
-    @if (TempData["Erro"] != null)
-    {
-        <div class="alert alert-danger border-0 shadow-sm rounded-3">@TempData["Erro"]</div>
-    }
 
-    @* SEÇÃO DOS ÔNIBUS (Mantida) *@
+    @* SEÇÃO 1: RESUMO DE DEMANDA (BARRINHAS) *@
+    <div class="mt-4 mb-5 d-print-none">
+        <h4 class="fw-bold text-azul-escuro mb-3">⏳ Resumo de Demanda (Lista de Espera)</h4>
+        <div class="row g-3">
+            @foreach (var resumo in Model.ResumoEspera)
+            {
+                var capRef = 44; // Referência de um ônibus padrão
+                var porcentagem = (resumo.Total * 100) / capRef;
+                var corBarra = resumo.Total >= capRef ? "bg-danger" : (resumo.Total >= 20 ? "bg-warning" : "bg-info");
+
+                <div class="col-md-4 col-xl-3">
+                    <div class="card border-0 shadow-sm p-3 rounded-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold text-azul-escuro">📍 @resumo.Terminal</span>
+                            <span class="badge bg-dark">@resumo.Total pessoas</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated @corBarra" 
+                                 role="progressbar" 
+                                 style="width: @(porcentagem > 100 ? 100 : porcentagem)%;">
+                            </div>
+                        </div>
+                        <small class="text-muted mt-2 d-block">
+                            @(capRef - resumo.Total > 0 ? $"Faltam {capRef - resumo.Total} para um novo ônibus" : "Demanda crítica! Analisar novo fretamento.")
+                        </small>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    @* SEÇÃO 2: RELATÓRIO DOS ÔNIBUS *@
     <div class="row g-4 mb-5">
         @foreach (var onibus in Model.RelatorioOnibus)
         {
@@ -45,7 +72,6 @@
                                         <th class="ps-3">Poltrona</th>
                                         <th>Passageiro</th>
                                         <th>Documento</th>
-                                        <th>Telefone</th>
                                         <th>Ações</th>
                                     </tr>
                                 </thead>
@@ -59,13 +85,10 @@
                                                 <small class="text-muted">@(r.AcompanhanteId == null ? "Titular" : "Acompanhante")</small>
                                             </td>
                                             <td class="small">@(r.Acompanhante?.RgCpf ?? r.Usuario.Rg)</td>
-                                            <td class="small">@(r.Acompanhante?.Telefone ?? r.Usuario?.Telefone ?? "-")</td>
                                             <td>
                                                 <form method="post" asp-page-handler="CancelarReserva" asp-route-reservaId="@r.Id" 
-                                                      onsubmit="return confirm('Deseja liberar este assento?');" class="d-inline">
-                                                    <button class="btn btn-outline-danger btn-sm border-0">
-                                                        <i class="bi bi-person-x"></i>
-                                                    </button>
+                                                      onsubmit="return confirm('Liberar assento?');" class="d-inline">
+                                                    <button class="btn btn-outline-danger btn-sm border-0"><i class="bi bi-person-x"></i></button>
                                                 </form>
                                             </td>
                                         </tr>
@@ -79,16 +102,15 @@
         }
     </div>
 
-    @* SEÇÃO: LISTA DE ESPERA ATUALIZADA *@
+    @* SEÇÃO 3: TABELA DETALHADA DA LISTA DE ESPERA *@
     <div class="mt-5 d-print-none">
-        <h4 class="fw-bold text-azul-escuro mb-3">⏳ Lista de Espera</h4>
+        <h4 class="fw-bold text-azul-escuro mb-3">📋 Detalhes da Fila</h4>
         <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="bg-light">
                         <tr>
                             <th class="ps-4">Solicitante</th>
-                            <th>Email</th>
                             <th>Telefone</th>
                             <th>Terminal</th>
                             <th>Data/Hora</th>
@@ -98,22 +120,19 @@
                     <tbody>
                         @if (!Model.FilaEspera.Any())
                         {
-                            <tr><td colspan="6" class="text-center py-4 text-muted">Ninguém na espera por enquanto.</td></tr>
+                            <tr><td colspan="5" class="text-center py-4 text-muted">Vazio.</td></tr>
                         }
                         @foreach (var espera in Model.FilaEspera)
                         {
                             <tr>
                                 <td class="ps-4 fw-bold">@espera.Usuario?.Nome</td>
-                                <td>@espera.Usuario?.Email</td>
                                 <td>@(espera.Usuario?.Telefone ?? "-")</td>
                                 <td><span class="badge bg-warning text-dark">@espera.TerminalDesejado</span></td>
                                 <td class="small text-muted">@espera.DataSolicitacao.ToString("dd/MM HH:mm")</td>
                                 <td>
-                                    <form method="post" asp-page-handler="RemoverDaEspera" asp-route(esperaId)="@espera.Id"
-                                          onsubmit="return confirm('Remover @espera.Usuario?.Nome da lista de espera?');">
-                                        <button class="btn btn-outline-danger btn-sm border-0">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
+                                    <form method="post" asp-page-handler="RemoverDaEspera" asp-route-esperaId="@espera.Id"
+                                          onsubmit="return confirm('Remover da lista?');">
+                                        <button class="btn btn-outline-danger btn-sm border-0"><i class="bi bi-trash"></i></button>
                                     </form>
                                 </td>
                             </tr>
@@ -126,6 +145,8 @@
 </div>
 
 <style>
+    .bg-azul-escuro { background-color: #002244; }
+    .text-azul-escuro { color: #002244; }
     .table-responsive::-webkit-scrollbar { width: 5px; }
     .table-responsive::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; }
     @@media print { .d-print-none { display: none !important; } .card { break-inside: avoid; } }
