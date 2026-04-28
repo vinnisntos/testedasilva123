@@ -49,3 +49,16 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         script: |
           sudo systemctl restart vinnisantos.service
+
+    - name: 6. Espionar o Servidor (Debug)
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          echo "=== CONFIGURACAO DO SERVICO ASP.NET ==="
+          cat /etc/systemd/system/vinnisantos.service
+          echo " "
+          echo "=== ONDE FOI PARAR O ARQUIVO NOVO? ==="
+          find /var/www/ -name "EscolherAssento.cshtml" -exec ls -l {} \;
