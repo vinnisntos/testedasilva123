@@ -2,7 +2,7 @@ name: Deploy Automático para AWS
 
 on:
   push:
-    branches: [ "main" ] # Se a sua branch principal chamar "master", mude aqui
+    branches: [ "main" ]
 
 jobs:
   build-and-deploy:
@@ -18,20 +18,20 @@ jobs:
         dotnet-version: '10.0.x'
 
     - name: 3. Publicar o projeto (Build)
-      # Aqui está a mágica: apontamos direto pro arquivo .csproj pra tirar a dúvida do servidor
       run: dotnet publish Mocidade015/Mocidade015.csproj -c Release -r linux-x64 --self-contained false -o ./publish
 
-    - name: 3.5 Preparar a pasta no servidor (Permissão)
+    - name: 4. PARAR o serviço (Desbloquear arquivos)
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_KEY }}
         script: |
+          sudo systemctl stop vinnisantos.service
           sudo mkdir -p /var/www/vinnisantos
           sudo chown -R ubuntu:ubuntu /var/www/vinnisantos
 
-    - name: 4. Enviar os arquivos para a AWS
+    - name: 5. Enviar os arquivos novos (SCP)
       uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.HOST }}
@@ -41,24 +41,11 @@ jobs:
         target: "/var/www/vinnisantos"
         strip_components: 1
 
-    - name: 5. Reiniciar o serviço do ASP.NET lá no Ubuntu
+    - name: 6. INICIAR o serviço novamente
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_KEY }}
         script: |
-          sudo systemctl restart vinnisantos.service
-
-    - name: 6. Espionar o Servidor (Debug)
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
-        script: |
-          echo "=== CONFIGURACAO DO SERVICO ASP.NET ==="
-          cat /etc/systemd/system/vinnisantos.service
-          echo " "
-          echo "=== ONDE FOI PARAR O ARQUIVO NOVO? ==="
-          find /var/www/ -name "EscolherAssento.cshtml" -exec ls -l {} \;
+          sudo systemctl start vinnisantos.service
