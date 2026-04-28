@@ -19,9 +19,12 @@ namespace Mocidade015.Pages.App
         [BindProperty(SupportsGet = true)]
         public string Terminal { get; set; } = string.Empty;
 
+        public string NomeUsuario { get; set; } = string.Empty;
+
         public void OnGet(string terminal)
         {
             Terminal = terminal;
+            NomeUsuario = User.Identity?.Name ?? "Usuário";
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -31,19 +34,17 @@ namespace Mocidade015.Pages.App
 
             if (string.IsNullOrEmpty(Terminal)) return Page();
 
-            // Salva na tabela ListaEspera
             var entrada = new ListaEspera
             {
                 Id = Guid.NewGuid(),
                 UsuarioId = userId,
-                TerminalSaida = Terminal, // Ajuste para o nome exato da sua coluna no banco
+                TerminalDesejado = Terminal, // Nome corrigido conforme sua Model
                 DataSolicitacao = DateTime.Now
             };
 
             _context.ListaEspera.Add(entrada);
             await _context.SaveChangesAsync();
 
-            // Redireciona passando o terminal como parâmetro de rota
             return RedirectToPage("/App/ListaEsperaConfirmado", new { terminal = Terminal });
         }
     }
