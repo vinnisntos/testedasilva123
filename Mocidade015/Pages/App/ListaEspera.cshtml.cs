@@ -25,12 +25,17 @@ namespace Mocidade015.Pages.App
         public bool JaEstaNaLista { get; set; }
         public int PosicaoNaLista { get; set; }
         public int PessoasNaFrente { get; set; }
+        public string NomeUsuario { get; set; } = string.Empty;
 
         public async Task<IActionResult> OnGetAsync(string terminal)
         {
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!Guid.TryParse(userIdStr, out Guid userId)) return RedirectToPage("/Index");
 
+            var usuario = await _context.Usuarios.FindAsync(userId);
+            if (usuario == null) return RedirectToPage("/Index");
+
+            NomeUsuario = usuario.Nome;
             Terminal = terminal;
 
             // Verifica se usuário já tem reserva neste terminal - se sim, não faz sentido estar na lista de espera
@@ -73,6 +78,9 @@ namespace Mocidade015.Pages.App
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!Guid.TryParse(userIdStr, out Guid userId)) return RedirectToPage("/Index");
 
+            var usuario = await _context.Usuarios.FindAsync(userId);
+            if (usuario == null) return RedirectToPage("/Index");
+
             // Verifica duplicidades antes de adicionar
             var jaEstaNaLista = await _reservaService.JaEstaNaListaDeEsperaAsync(userId, terminal);
             if (jaEstaNaLista)
@@ -105,6 +113,7 @@ namespace Mocidade015.Pages.App
                     .CountAsync();
 
                 TempData["Sucesso"] = $"Você entrou na lista de espera! Posição: {posicao}º";
+                return RedirectToPage("/App/ListaEsperaConfirmado", new { terminal });
             }
             else
             {

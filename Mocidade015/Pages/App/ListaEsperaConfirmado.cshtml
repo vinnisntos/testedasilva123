@@ -1,0 +1,44 @@
+@page "{terminal}"
+@model Mocidade015.Pages.App.ListaEsperaConfirmadoModel
+@{
+    ViewData["Title"] = "Confirmação de Lista de Espera";
+}
+
+<div class="card shadow border-0 rounded-4 mx-auto" style="max-width: 500px;">
+    <div class="card-body p-5 text-center">
+        <div class="mb-4">
+            <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+        </div>
+
+        <h3 class="fw-bold text-azul-escuro mb-3">Você está na Lista de Espera!</h3>
+
+        <p class="text-muted mb-4">
+            Terminal <strong>@Model.Terminal</strong>
+        </p>
+
+        <div class="alert alert-success border-0 shadow-sm rounded-3 mb-4">
+            <i class="bi bi-info-circle-fill me-2"></i>
+            Sua posição atual: <strong>@Model.PosicaoNaLista</strong>º
+        </div>
+
+        <div class="card bg-light border-0 mb-4">
+            <div class="card-body py-3">
+                <p class="mb-2 small text-muted">O que acontece agora?</p>
+                <ul class="text-start small mb-0">
+                    <li>Você será notificado se uma vaga surgir</li>
+                    <li>Sua posição é atualizada automaticamente</li>
+                    <li>Você pode cancelar a entrada na lista a qualquer momento</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2">
+            <a asp-page="/App/Dashboard" class="btn btn-primary-custom fw-bold">
+                Voltar ao Dashboard
+            </a>
+            <a asp-page="/Perfil" class="btn btn-outline-secondary">
+                <i class="bi bi-person me-2"></i>Meu Perfil
+            </a>
+        </div>
+    </div>
+</div>

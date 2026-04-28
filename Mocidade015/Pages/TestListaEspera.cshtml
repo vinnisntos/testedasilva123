@@ -1,0 +1,26 @@
+@page
+@model Mocidade015.Pages.TestListaEsperaModel
+@{
+    ViewData["Title"] = "Teste Lista de Espera";
+}
+
+<div class="container mt-4">
+    <h2>🧪 Teste de Lista de Espera</h2>
+    <p class="text-muted">Resultados dos testes de integração com o banco de dados</p>
+
+    @if (!string.IsNullOrEmpty(Model.Resultado))
+    {
+        <pre class="bg-dark text-light p-3 rounded">@Model.Resultado</pre>
+    }
+
+    <div class="mt-4">
+        <form method="post" class="d-inline">
+            <button type="submit" class="btn btn-primary">
+                🔄 Rodar Testes Novamente
+            </button>
+        </form>
+        <a asp-page="/App/Dashboard" class="btn btn-outline-secondary ms-2">
+            Voltar ao Dashboard
+        </a>
+    </div>
+</div>

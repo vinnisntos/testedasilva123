@@ -10,18 +10,38 @@
         <p class="text-muted small mb-4">Para onde vamos no dia 26/07?</p>
 
         <div class="list-group gap-3">
-            @foreach (var onibus in Model.ListaOnibus)
+            @foreach (var item in Model.ListaOnibus)
             {
-                <div class="list-group-item border rounded-3 p-3 shadow-sm d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="fw-bold mb-1 text-azul-escuro">Terminal @onibus.TerminalSaida</h6>
-                        <div class="badge bg-light text-dark border">
-                            🕒 Saída: @onibus.HorarioSaida.ToString(@"hh\:mm")
+                <div class="list-group-item border rounded-3 p-3 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="fw-bold mb-1 text-azul-escuro">Terminal @item.Onibus.TerminalSaida</h6>
+                            <div class="d-flex gap-2 mt-1">
+                                <div class="badge bg-light text-dark border">
+                                    🕒 Saída: @item.Onibus.HorarioSaida.ToString(@"hh\:mm")
+                                </div>
+                                <div class="badge @(item.EstaLotado ? "bg-danger" : "bg-success")">
+                                    @item.Ocupados/@item.LotacaoMaxima @(item.EstaLotado ? "Lotado" : "Lugares")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            @if (item.EstaLotado)
+                            {
+                                <a asp-page="/App/ListaEspera" asp-route-terminal="@item.Onibus.TerminalSaida"
+                                   class="btn btn-warning btn-sm px-3 fw-bold">
+                                    <i class="bi bi-clock-history me-1"></i>Lista de Espera
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-page="/App/Identificacao" asp-route-onibusId="@item.Onibus.Id"
+                                   class="btn btn-primary-custom btn-sm px-3 fw-bold">
+                                    Selecionar
+                                </a>
+                            }
                         </div>
                     </div>
-                    <a asp-page="/App/Identificacao" asp-route-onibusId="@onibus.Id" class="btn btn-primary-custom btn-sm px-3 fw-bold">
-                        Selecionar
-                    </a>
                 </div>
             }
         </div>
